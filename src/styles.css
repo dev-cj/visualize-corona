@@ -1,0 +1,68 @@
+.App {
+  font-family: sans-serif;
+  text-align: center;
+  height: 100vh;
+}
+
+.countryPopUp {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  list-style-type: none;
+}
+.todayAdded {
+  height: 30px;
+  width: 30px;
+  background-color: rgba(248, 93, 93, 0.863);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.markerCustom {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.visualize-comp {
+  /* display: flex;
+  flex-direction: row; */
+  /* align-items: center; */
+  width: 100%;
+  height: 100%;
+}
+
+.visualise-div {
+  /* display: flex; */
+  width: 100vw;
+  height: 100vh;
+}
+/* .left-option-div {
+  width: 5vw;
+  background-color: orange;
+} */
+.right-plot-div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: black;
+  width: 100vw;
+  height: 100vh;
+}
+.link-to-graph {
+  height: 2vh;
+}
+
+.map {
+  width: 100%;
+  height: 100%;
+}
+svg {
+  display: inherit !important;
+}
+.js-plotly-plot {
+  position: relative;
+  display: inline-block;
+}
