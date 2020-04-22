@@ -4,6 +4,8 @@ import axios from 'axios'
 import { Heading, Text, Link, Icon, Box } from '@chakra-ui/core'
 import DrawerOption from './drawer'
 import Plot from 'react-plotly.js'
+import { useDispatch } from 'react-redux'
+import * as actionTypes from '../redux/actions/actionTypes'
 
 async function fetchData(url) {
   const historical = 'https://corona.lmao.ninja/v2/historical?lastdays=all'
@@ -20,6 +22,8 @@ async function fetchData(url) {
 }
 
 export default function Graph() {
+  const dispatch = useDispatch()
+
   const [countryData, addData] = useState(null)
   const [plotData, addPlotCountry] = useState({})
   const [samplePlot] = useState({
@@ -85,6 +89,7 @@ export default function Graph() {
     }
     await new_api_func()
     await addData(obj)
+    dispatch({ type: actionTypes.SET_DATA, payload: obj })
     // await console.log(obj)
   }
 
