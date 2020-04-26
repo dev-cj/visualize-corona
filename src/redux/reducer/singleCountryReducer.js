@@ -7,7 +7,8 @@ export const initialState = {
   scatterType: {},
   pieDateType: 'single',
   pieDateSingle: '',
-  pieDateRange: '',
+  xaxisDateDiff: 0,
+  dateRange: [],
 }
 
 const singleCountryReducer = (state = initialState, action) => {
@@ -47,6 +48,19 @@ const singleCountryReducer = (state = initialState, action) => {
       return {
         ...state,
         pieDateSingle: action.payload,
+      }
+    }
+    case actionTypes.SET_singleCountry_dateRange: {
+      return {
+        ...state,
+        dateRange: action.payload,
+      }
+    }
+
+    case actionTypes.SET_singleCountry_xaxisDateDiff: {
+      return {
+        ...state,
+        xaxisDateDiff: action.payload,
       }
     }
     default:

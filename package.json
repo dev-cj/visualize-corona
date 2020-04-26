@@ -15,7 +15,7 @@
     "moment": "2.24.0",
     "plotly.js": "1.53.0",
     "react": "^16.13.1",
-    "react-day-picker": "^7.4.8",
+    "react-datepicker": "^2.14.1",
     "react-dom": "^16.13.1",
     "react-leaflet": "2.6.3",
     "react-plotly.js": "2.4.0",
@@ -30,8 +30,11 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
+  "homepage": "https://dev-cj.github.io/visualize-corona",
   "eslintConfig": {
     "extends": "react-app"
   },
@@ -48,6 +51,7 @@
     ]
   },
   "devDependencies": {
+    "gh-pages": "^2.2.0",
     "redux-devtools": "^3.5.0"
   }
 }

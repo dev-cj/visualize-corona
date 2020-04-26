@@ -13,3 +13,8 @@ export const SET_singleCountry_scatterType = 'SET_SINGLE_COUNTRY_scatterType'
 
 export const SET_singleCountry_pieDateSingle =
   'SET_SINGLE_COUNTRY_pieDateSingle'
+
+export const SET_singleCountry_dateRange = 'SET_SINGLE_COUNTRY_dateRange'
+
+export const SET_singleCountry_xaxisDateDiff =
+  'SET_SINGLE_COUNTRY_xaxisDateDiff'

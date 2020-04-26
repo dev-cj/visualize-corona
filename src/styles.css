@@ -3,7 +3,28 @@
   text-align: center;
   height: 100vh;
 }
-
+.app-90 {
+  height: 96vh;
+}
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@600&display=swap');
+.info-box {
+  height: 4vh;
+  background: #1b242f;
+  font-family: 'Raleway', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.footnote {
+  color: #fff;
+  position: inherit;
+  border-bottom: 2px solid #e31b6d;
+  display: inline-block;
+  line-height: 0.95;
+}
+.highlight {
+  color: #e31b6d;
+}
 .countryPopUp {
   display: flex;
   align-items: center;
@@ -44,9 +65,9 @@
   background-color: orange;
 } */
 .right-plot-div {
-  display: flex;
+  /* display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: center; */
   background-color: black;
   width: 100vw;
   height: 100vh;
@@ -62,7 +83,7 @@
 svg {
   display: inherit !important;
 }
-.js-plotly-plot {
+/* .js-plotly-plot {
   position: relative;
   display: inline-block;
-}
+} */

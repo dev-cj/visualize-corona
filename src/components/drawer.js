@@ -5,64 +5,39 @@ import {
   DrawerHeader,
   DrawerOverlay,
   DrawerContent,
-  DrawerCloseButton,
+  // DrawerCloseButton,
   Button,
   Select,
   useDisclosure,
   Box,
+  Alert,
+  AlertIcon,
 } from '@chakra-ui/core'
 
 import React, { useState } from 'react'
 import CountryChart from './singleCountryChart'
 
-const DrawerOption = ({ countryData, plotFunc }) => {
+const DrawerOption = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const btnRef = React.useRef()
 
   const [option, setoption] = useState('')
-
-  const apply = (obj) => {
-    plotFunc.addPlotCountry(obj)
-  }
-  const [samplePlot] = useState({
-    init: {
-      data: [
-        { type: 'bar', x: ['a', 'b', 'c'], y: [2, 5, 6] },
-        { type: 'line', x: ['a', 'b', 'c'], y: [2, 5, 3] },
-      ],
-      layout: {
-        width: '100%',
-        height: '100%',
-        title: 'A sample plot',
-        barmode: 'relative',
-        autosize: true,
-      },
-      frames: [],
-      config: { responsive: true },
-    },
-    empty: {
-      data: [],
-      layout: { width: '100%', height: '100%', title: '' },
-      frames: [],
-      config: { responsive: true },
-    },
-  })
 
   const switchOption = (value) => {
     switch (value) {
       case 'country-chart':
         return (
           <>
-            <CountryChart
-              key='country-chart'
-              props={{ countryData, plotFunc }}
-            />
+            <CountryChart key='country-chart' />
           </>
         )
       case 'compare-countries':
-        return '🥺🥺🥺'
-      case 'something-new':
-        return 'something-new'
+        return (
+          <Alert status='info' mt={2}>
+            <AlertIcon />
+            Compare Countries feature is coming soon!
+          </Alert>
+        )
       default:
         return
     }
@@ -73,26 +48,25 @@ const DrawerOption = ({ countryData, plotFunc }) => {
       <Button
         ref={btnRef}
         pos='absolute'
-        top='30%'
-        left='0'
+        bottom='10%'
+        left='1%'
         variantColor='teal'
         onClick={onOpen}
         zIndex={100}
         key='menu-button'
+        leftIcon='edit'
       >
-        Menu
+        Create
       </Button>
       <Drawer
         isOpen={isOpen}
         placement='left'
         onClose={onClose}
-        // finalFocusRef={btnRef}
         isFullHeight={true}
         key='drawer-content'
       >
         <DrawerOverlay />
         <DrawerContent>
-          <DrawerCloseButton />
           <DrawerHeader>Create your chart</DrawerHeader>
           <DrawerBody>
             <Box
@@ -108,7 +82,6 @@ const DrawerOption = ({ countryData, plotFunc }) => {
               >
                 <option value='country-chart'>Country Chart</option>
                 <option value='compare-countries'>Compare Countries</option>
-                <option value='something-new'>Something new</option>
               </Select>
               {switchOption(option)}
             </Box>
@@ -116,9 +89,8 @@ const DrawerOption = ({ countryData, plotFunc }) => {
 
           <DrawerFooter>
             <Button variant='outline' mr={3} onClick={onClose}>
-              Cancel
+              Close
             </Button>
-            <Button color='blue'>Save</Button>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>

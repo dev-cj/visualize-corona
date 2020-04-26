@@ -6,63 +6,47 @@ import {
   MenuDivider,
   MenuOptionGroup,
   MenuItemOption,
-  RadioButtonGroup,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
+  Text,
+  Box,
 } from '@chakra-ui/core'
 import React, { useState, useEffect, Fragment } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import * as actionTypes from '../redux/actions/actionTypes'
-import DayPickerInput from 'react-day-picker/DayPickerInput'
-import 'react-day-picker/lib/style.css'
 import moment from 'moment'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
 
-const CountryChart = ({ props }) => {
+const CountryChart = () => {
   const dispatch = useDispatch()
-  const { countryData, plotFunc } = props
   const countries = useSelector((state) => state.visualizeData)
   const [countryArr] = useState(Object.keys(countries).sort())
-  const [samplePlot] = useState({
-    empty: {
-      data: [],
-      layout: { width: '100%', height: '100%', title: '' },
-      frames: [],
-      config: { responsive: true },
-    },
-  })
-
   const singleCountryData = useSelector((state) => state.singleCountryData)
 
   const [singleCountryPlot, setSingleCountryPlot] = useState({})
-  // const [CRD, setCRD] = useState([])
+  const currentCountry = singleCountryData.country
+  const currentType = singleCountryData.type
+  const dateDiff = singleCountryData.xaxisDateDiff
   const CRD = singleCountryData.CRD
-  // const [scatterType, setScatterType] = useState({})
   const scatterType = singleCountryData.scatterType
-  const modifySingleCountry = (term, obj) => {
+  const [apply, setApply] = useState(false)
+  const modifySingleCountry = (term) => {
     if (term === 'CRD') {
-      // console.log(CRD.length, 'length', CRD)
-      if (CRD.length > 0) {
+      if (CRD.length) {
+        console.log('waaaaaaaah')
         let update = false
         const plot = {
           data: [],
           layout: {
-            width: '',
-            height: 'auto',
-            title:
-              singleCountryData.country +
-              ' ' +
-              singleCountryData.type +
-              ' ' +
-              'chart',
-            barmode: 'group',
+            title: currentCountry + ' ' + currentType + ' chart',
+            xaxis: {},
           },
           frames: [],
-          config: {
-            responsive: true,
-            scrollZoom: true,
-            toImageButtonOptions: {
-              format: 'jpeg',
-              scale: 3,
-            },
-          },
+          config: {},
         }
         const getKey = {
           cases: 'confirmed',
@@ -83,16 +67,13 @@ const CountryChart = ({ props }) => {
           new_deaths: '#78BBD9',
           new_recovered: '#98AAC0',
         }
-        console.log(countries[singleCountryData.country]['timeline'])
-        const type = singleCountryData.type
-        if (type === 'scatter' || type === 'bar') {
+
+        if (['scatter', 'bar'].includes(currentType)) {
           CRD.forEach((el) => {
-            const xaxisDate =
-              countries[singleCountryData.country]['timeline']['date']
-            const yAxisData =
-              countries[singleCountryData.country]['timeline'][getKey[el]]
+            const xaxisDate = countries[currentCountry]['timeline']['date']
+            const yAxisData = countries[currentCountry]['timeline'][getKey[el]]
             const data = {
-              type: type,
+              type: currentType,
               x: xaxisDate,
               y: yAxisData,
               name: el,
@@ -101,20 +82,31 @@ const CountryChart = ({ props }) => {
               },
             }
 
-            if (type === 'scatter') {
+            if (currentType === 'scatter') {
               data['mode'] = scatterType[el] ? scatterType[el] : 'lines'
             }
             plot.data.push(data)
             update = true
           })
-          plot.layout['xaxis'] = {
+          plot.layout.xaxis = {
+            dtick: singleCountryData.xaxisDateDiff * 86400000,
+            automargin: true,
+            title: {
+              text: 'Timeline',
+              standoff: 5,
+            },
             autorange: true,
-            range: ['2020-01-22', '2020-09-20'],
             rangeselector: {
               buttons: [
                 {
                   count: 1,
                   label: '1m',
+                  step: 'month',
+                  stepmode: 'backward',
+                },
+                {
+                  count: 3,
+                  label: '3m',
                   step: 'month',
                   stepmode: 'backward',
                 },
@@ -127,22 +119,19 @@ const CountryChart = ({ props }) => {
                 { step: 'all' },
               ],
             },
-            rangeslider: { range: ['2020-01-01', '2020-04-17'] },
+            rangeslider: { range: [] },
             type: 'date',
           }
         }
-        if (type === 'pie') {
+        if (currentType === 'pie') {
           const pieDateSingle = singleCountryData.pieDateSingle
           if (CRD.length && pieDateSingle) {
-            console.log('blahhhhh :>> ', pieDateSingle)
-            const dateArr =
-              countries[singleCountryData.country]['timeline']['date']
+            const dateArr = countries[currentCountry]['timeline']['date']
             const values = []
             const labels = []
             const markers = []
             CRD.forEach((el) => {
-              const arr =
-                countries[singleCountryData.country]['timeline'][getKey[el]]
+              const arr = countries[currentCountry]['timeline'][getKey[el]]
               const dateIndex = dateArr.indexOf(pieDateSingle)
               const val = pieDateSingle ? arr[dateIndex] : arr.pop()
               values.push(val)
@@ -150,12 +139,13 @@ const CountryChart = ({ props }) => {
               markers.push(colors[el])
             })
             const data = {
-              type: type,
+              type: currentType,
               values: values,
               labels: labels,
               marker: {
                 colors: markers,
               },
+              texttemplate: '%{label}: %{value} (%{percent})',
               textinfo: 'label+percent',
               textposition: 'outside',
               automargin: true,
@@ -169,27 +159,24 @@ const CountryChart = ({ props }) => {
           }
         }
         if (update) setSingleCountryPlot(plot)
-        console.log(plot, 'plott', singleCountryData)
       }
     }
   }
-  const addToPlot = () => {
-    plotFunc.addPlotCountry(singleCountryPlot)
-  }
-  useEffect(() => {
-    modifySingleCountry('CRD')
-  }, [singleCountryData])
 
   useEffect(() => {
-    console.log('singlecountrydata useeffect changed?')
-  }, [singleCountryData])
-
-  useEffect(() => {
-    if (singleCountryData.country) {
-      plotFunc.addPlotCountry(singleCountryPlot)
+    if (singleCountryData.country && apply) {
+      console.log('sing c and apply')
+      dispatch({ type: actionTypes.SET_PLOT, payload: singleCountryPlot })
+      setApply(false)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [singleCountryPlot])
-
+  useEffect(() => {
+    console.log('modify useeffect')
+    modifySingleCountry('CRD')
+    setApply(true)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [singleCountryData])
   const setScatter = (arg) => {
     const arr = arg.split('-')
     dispatch({
@@ -198,27 +185,26 @@ const CountryChart = ({ props }) => {
     })
   }
   const optionsArray = ['Cases', 'Deaths', 'Recovered', 'Active']
-  const SwitchOption = (
+  return (
     <>
-      <Menu
-        closeOnSelect={true}
-        onOpen={
-          singleCountryData.country
-            ? () => plotFunc.addPlotCountry(samplePlot.empty)
-            : null
-        }
-      >
+      <Menu closeOnSelect={true}>
         <MenuButton mt={2} as={Button} variantColor='blue' size='md'>
           Select country
         </MenuButton>
-        <MenuList minWidth='240px' maxHeight='50vh' overflowY='scroll'>
+        <MenuList minWidth='240px' maxHeight='70vh' overflowY='scroll'>
           <MenuOptionGroup
             title='Country'
             type='radio'
-            onChange={(value) =>
+            onChange={(value) => {
               dispatch({ type: actionTypes.SET_singleCountry, payload: value })
-            }
-            defaultValue={singleCountryData.country}
+              dispatch({
+                type: actionTypes.SET_singleCountry_dateRange,
+                payload: Object.keys(
+                  countries[value]['timeline']['dataByDate']
+                ).reverse(),
+              })
+            }}
+            defaultValue={currentCountry}
           >
             {countryArr.map((el) => {
               return (
@@ -230,7 +216,7 @@ const CountryChart = ({ props }) => {
           </MenuOptionGroup>
         </MenuList>
       </Menu>
-      {singleCountryData.country ? (
+      {currentCountry ? (
         <>
           <Menu closeOnSelect={true}>
             <MenuButton mt={2} as={Button} variantColor='blue' size='md'>
@@ -246,7 +232,7 @@ const CountryChart = ({ props }) => {
                     payload: value,
                   })
                 }
-                defaultValue={singleCountryData.type}
+                defaultValue={currentType}
               >
                 {['Bar', 'Scatter', 'Pie'].map((el) => {
                   return (
@@ -261,7 +247,7 @@ const CountryChart = ({ props }) => {
               </MenuOptionGroup>
             </MenuList>
           </Menu>
-          {singleCountryData.type ? (
+          {currentType ? (
             <>
               <Menu closeOnSelect={false}>
                 <MenuButton mt={2} as={Button} variantColor='blue' size='md'>
@@ -292,12 +278,12 @@ const CountryChart = ({ props }) => {
                   </MenuOptionGroup>
                 </MenuList>
               </Menu>
-              {singleCountryData.type === 'scatter' && CRD.length ? (
+              {currentType === 'scatter' && CRD.length ? (
                 <Menu closeOnSelect={false}>
                   <MenuButton mt={2} as={Button} variantColor='blue' size='md'>
                     Modes
                   </MenuButton>
-                  <MenuList minWidth='240px'>
+                  <MenuList minWidth='240px' position='relative'>
                     {optionsArray.map((el) => {
                       const el_lowercase = el.toLowerCase()
                       return CRD.includes(el_lowercase) ? (
@@ -337,21 +323,65 @@ const CountryChart = ({ props }) => {
                   </MenuList>
                 </Menu>
               ) : null}
-              {singleCountryData.type === 'pie' && CRD.length ? (
-                <DayPickerInput
-                  value={singleCountryData.pieDateSingle}
-                  onDayChange={(date) =>
-                    dispatch({
-                      type: actionTypes.SET_singleCountry_pieDateSingle,
-                      payload: moment(date).format('YYYY-MM-DD'),
-                    })
-                  }
-                  dayPickerProps={{
-                    // month: new Date(2018, 8),
-                    fromMonth: new Date(2020, 0),
-                    toMonth: new Date(2020, 11),
-                  }}
-                />
+              {['bar', 'scatter'].includes(currentType) && CRD.length ? (
+                <>
+                  <Text color='gray.500' mt={2}>
+                    Select spacing between date on xaxis
+                  </Text>
+                  <NumberInput
+                    mt={2}
+                    defaultValue={dateDiff}
+                    onChange={(value) =>
+                      dispatch({
+                        type: actionTypes.SET_singleCountry_xaxisDateDiff,
+                        payload: value,
+                      })
+                    }
+                  >
+                    <NumberInputField type='number' placeholder='Default' />{' '}
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
+                </>
+              ) : null}
+              {currentType === 'pie' && CRD.length ? (
+                <>
+                  <Box mt={2}>
+                    <DatePicker
+                      {...(singleCountryData.pieDateSingle
+                        ? {
+                            selected: moment(
+                              singleCountryData.pieDateSingle,
+                              moment.defaultFormat
+                            ).toDate(),
+                          }
+                        : undefined)}
+                      dateFormat='dd/MM/yyyy'
+                      onChange={(date) =>
+                        dispatch({
+                          type: actionTypes.SET_singleCountry_pieDateSingle,
+                          payload: moment(date).format('YYYY-MM-DD'),
+                        })
+                      }
+                      minDate={moment(
+                        singleCountryData.dateRange[0],
+                        moment.defaultFormat
+                      ).toDate()}
+                      maxDate={moment(
+                        singleCountryData.dateRange[
+                          singleCountryData.dateRange.length - 1
+                        ],
+                        moment.defaultFormat
+                      ).toDate()}
+                      includeDates={singleCountryData.dateRange.map((el) =>
+                        moment(el, moment.defaultFormat).toDate()
+                      )}
+                      placeholderText='Select a date'
+                    />
+                  </Box>
+                </>
               ) : null}
             </>
           ) : null}
@@ -359,8 +389,6 @@ const CountryChart = ({ props }) => {
       ) : null}
     </>
   )
-
-  return SwitchOption
 }
 
 export default CountryChart

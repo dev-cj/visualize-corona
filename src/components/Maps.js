@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
 
 import { Map, Marker, Popup, TileLayer } from 'react-leaflet'
 import L from 'leaflet'
 import moment from 'moment'
 import { geoData } from './helper'
-import { useToast, Box, Button } from '@chakra-ui/core'
+// import { useToast, Box, Button } from '@chakra-ui/core'
 const icon = (url) =>
   new L.icon({
     iconUrl: 'https://img.icons8.com/color/96/000000/marker.png',
@@ -13,7 +12,6 @@ const icon = (url) =>
   })
 const Maps = () => {
   const [data, updateData] = useState(null)
-  const valueRef = useRef(null)
 
   // const [pop, activePop] = useState(null);
   const asyncfun = async () => {
@@ -28,12 +26,13 @@ const Maps = () => {
   }
   useEffect(() => {
     dataMap()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const marker = (prop) => {
     const properties = prop.properties
     const date = new Date(properties.updated)
-    let wow = moment(date).fromNow()
+    let lastUpdated = moment(date).fromNow()
     return (
       <Marker
         icon={icon()}
@@ -54,29 +53,10 @@ const Maps = () => {
             <div className='todayAdded'> +{properties.todayCases} </div>
             <li> Active : {properties.active} </li>
             <li> Recovered : {properties.recovered} </li>
-            <li> Updated {wow} </li>
+            <li> Updated {lastUpdated} </li>
           </div>
         </Popup>
       </Marker>
-    )
-  }
-  const toast = useToast()
-  function ToastExample() {
-    const toast = useToast()
-    return (
-      <div
-        onLoad={() =>
-          toast({
-            title: 'Account created.',
-            description: "We've created your account for you.",
-            status: 'success',
-            duration: null,
-            isClosable: true,
-          })
-        }
-      >
-        {}
-      </div>
     )
   }
 

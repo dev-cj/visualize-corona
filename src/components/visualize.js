@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { Link as Rlink } from 'react-router-dom'
 import axios from 'axios'
-import { Heading, Text, Link, Icon, Box } from '@chakra-ui/core'
+import { Heading, Text, Link, Icon, Box, Spinner } from '@chakra-ui/core'
 import DrawerOption from './drawer'
+import DesktopVisualizerLeft from './desktopVisualizerLeft'
 import Plot from 'react-plotly.js'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import * as actionTypes from '../redux/actions/actionTypes'
 
 async function fetchData(url) {
@@ -23,25 +23,9 @@ async function fetchData(url) {
 
 export default function Graph() {
   const dispatch = useDispatch()
-
+  const plotData = useSelector((state) => state.plotReducer.plotData)
   const [countryData, addData] = useState(null)
-  const [plotData, addPlotCountry] = useState({})
-  const [samplePlot] = useState({
-    init: {
-      data: [
-        { type: 'bar', x: ['a', 'b', 'c'], y: [2, 5, 6] },
-        { type: 'bar', x: ['a', 'b', 'c'], y: [2, 5, 3] },
-      ],
-      layout: {
-        width: '100%',
-        height: '100%',
-        title: 'A sample plot',
-        barmode: 'group',
-      },
-      frames: [],
-      config: { responsive: true },
-    },
-  })
+
   const getData = async () => {
     const data = await fetchData('new').then((data) => data)
     await console.log(data)
@@ -69,18 +53,20 @@ export default function Graph() {
           if (key === 'timeline') {
             let timelineArr = el[key]
             let timelineObj = {}
-            // timelineObj['date_array'] = timelineArr.map((el) => el.date)
+            const dataByDate = {}
             let keys = timelineArr[1] ? Object.keys(timelineArr[1]) : null
             if (keys)
               keys.forEach((key) => {
-                // console.log(
-                //   'keysblahhhh :',
-                //   key,
-                //   timelineArr.map((obj) => obj[key]).reverse()
-                // )
-                timelineObj[key] = timelineArr.map((obj) => obj[key]).reverse()
+                timelineObj[key] = timelineArr
+                  .map((obj) => {
+                    if (key === 'date') {
+                      dataByDate[obj.date] = obj
+                    }
+                    return obj[key]
+                  })
+                  .reverse()
               })
-            // timelineArr.forEach((el) => (timelineObj[el] = el))
+            timelineObj['dataByDate'] = dataByDate
             countryObj[key] = timelineObj
           } else countryObj[key] = el[key]
         })
@@ -90,44 +76,81 @@ export default function Graph() {
     await new_api_func()
     await addData(obj)
     dispatch({ type: actionTypes.SET_DATA, payload: obj })
-    // await console.log(obj)
   }
 
   useEffect(() => {
     console.log('calling get data useffect')
     getData()
   }, [])
-  useEffect(() => {
-    if (countryData) {
-      addPlotCountry(samplePlot.init)
-    }
-  }, [countryData])
+
   return (
     <div className='visualize-comp'>
       <>
         <div className='visualise-div'>
           <div className='left-option-div'>
             {countryData ? (
-              <DrawerOption
-                key='drawer-option'
-                countryData={countryData}
-                plotFunc={{ addPlotCountry }}
-              />
+              <DrawerOption key='drawer-option' />
             ) : (
-              'Data not fetched'
+              <>
+                'Fetching Data'
+                <Spinner
+                  thickness='4px'
+                  speed='0.65s'
+                  emptyColor='gray.200'
+                  color='blue.500'
+                  size='xl'
+                />
+              </>
             )}
           </div>
-
-          <div className='right-plot-div'>
-            <Plot
-              data={plotData.data}
-              layout={{ ...plotData.layout, type: 'date' }}
-              // frames={this.state.frames}
-              config={{ ...plotData.config, displaylogo: false }}
-              // onInitialized={figure => this.setState(figure)}
-              // onUpdate={figure => this.setState(figure)}
-            />
-          </div>
+          <Box d='flex' width='full' height='96%' flexDirection='row' bg='#485'>
+            <Box width='20%'>
+              <DesktopVisualizerLeft />
+            </Box>
+            <Box
+              d='flex'
+              flexDirection='column'
+              width='80%'
+              height='100%'
+              bg='#999'
+              pr={0}
+            >
+              <Plot
+                data={plotData.data}
+                layout={{
+                  ...plotData.layout,
+                  type: 'date',
+                  barmode: 'group',
+                  autosize: true,
+                  // width: window.innerWidth * 0.8,
+                  height: window.innerHeight * 0.96,
+                  // margin: {
+                  //   l: 50,
+                  //   r: 50,
+                  //   b: 100,
+                  //   t: 100,
+                  //   pad: 4,
+                  // },
+                }}
+                // frames={this.state.frames}
+                config={{
+                  ...plotData.config,
+                  displayModeBar: true,
+                  displaylogo: false,
+                  scrollZoom: true,
+                  responsive: true,
+                  useResizeHandler: true,
+                  style: { width: '100%', height: '100%' },
+                  toImageButtonOptions: {
+                    format: 'jpeg',
+                    scale: 3,
+                  },
+                }}
+                // onInitialized={figure => this.setState(figure)}
+                // onUpdate={figure => this.setState(figure)}
+              />
+            </Box>
+          </Box>
         </div>
       </>
     </div>

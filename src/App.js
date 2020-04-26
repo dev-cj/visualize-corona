@@ -1,59 +1,64 @@
 import React, { useEffect } from 'react'
-import { BrowserRouter, Switch, Route } from 'react-router-dom'
+import { HashRouter as Router, Switch, Route, Link } from 'react-router-dom'
 import './styles.css'
 import Graph from './components/visualize'
 import Maps from './components/Maps'
-import { ThemeProvider, theme, CSSReset } from '@chakra-ui/core'
-import { useToast, Box, Button } from '@chakra-ui/core'
+import { ThemeProvider, CSSReset, useToast, Box } from '@chakra-ui/core'
 
-const customTheme = {
-  ...theme,
-  colors: {
-    ...theme.colors,
-    brand: {
-      900: '#1a365d',
-      800: '#153e75',
-      700: '#2a69ac',
-    },
-  },
-}
-export default function App() {
-  function Main() {
+const App = () => {
+  const Main = () => {
     const toast = useToast()
 
     useEffect(() => {
       toast({
-        position: 'bottom',
+        position: 'bottom-right',
         duration: null,
         isClosable: true,
-        render: () => (
-          <Box m={3} color='white' p={3} bg='blue.500'>
-            <a href={window.location.pathname === '/' ? '/graph' : '/'}>
-              {window.location.pathname === '/' ? 'Visualize' : 'Map'}
-            </a>
-          </Box>
-        ),
+        render: () => {
+          const pathname = window.location.href.split('/').pop()
+          return (
+            <Box m={3} color='white' p={3} bg='blue.500'>
+              <a href={pathname === 'graph' ? '#/' : '#/graph'}>
+                {pathname === 'graph' ? 'Map' : 'Visualize'}
+              </a>
+            </Box>
+          )
+        },
       })
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return <></>
   }
   return (
-    <BrowserRouter>
+    <Router>
       <ThemeProvider>
         <CSSReset />
+        <Main />
         <div className='App'>
-          <Main />
-          <Switch>
-            <Route exact path='/'>
-              <Maps />
-            </Route>
-            <Route path='/graph'>
-              <Graph />
-            </Route>
-          </Switch>
+          <div className='app-90'>
+            <Switch>
+              <Route exact path='/'>
+                <Maps />
+              </Route>
+              <Route path='/graph'>
+                <Graph />
+              </Route>
+            </Switch>
+          </div>
+          <div className='info-box'>
+            <div className='footnote'>
+              <a href='http://devcj.in'>
+                Built By <span className='highlight'>CJ</span>
+              </a>
+              <Link to='/graph'> visualize</Link>
+              <Link to='/'>Map</Link>
+            </div>
+          </div>
         </div>
       </ThemeProvider>
-    </BrowserRouter>
+    </Router>
   )
 }
+
+export default App
