@@ -39,7 +39,6 @@ const CountryChart = () => {
   const modifySingleCountry = (term) => {
     if (term === 'CRD') {
       if (CRD.length) {
-        console.log('waaaaaaaah')
         let update = false
         const plot = {
           data: [],
@@ -167,14 +166,12 @@ const CountryChart = () => {
 
   useEffect(() => {
     if (singleCountryData.country && apply) {
-      console.log('sing c and apply')
       dispatch({ type: actionTypes.SET_PLOT, payload: singleCountryPlot })
       setApply(false)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [singleCountryPlot])
   useEffect(() => {
-    console.log('modify useeffect')
     modifySingleCountry('CRD')
     setApply(true)
     // eslint-disable-next-line react-hooks/exhaustive-deps

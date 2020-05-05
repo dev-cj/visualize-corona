@@ -33,7 +33,7 @@ const App = () => {
                 d='flex'
                 mt='auto'
                 height='auto'
-                paddingY='2px'
+                // paddingY='2px'
                 width='full'
                 justifyContent='center'
               >

@@ -25,11 +25,11 @@ const Maps = () => {
   const dataMap = () => {
     asyncfun().then((data) => {
       updateData(data.geoJson)
-      dispatch({ type: actionTypes.SET_MAP_DATA, payload: data.geoJson })
       dispatch({
         type: actionTypes.SET_STATS_COUNTRIES,
         payload: data.countriesObj,
       })
+      dispatch({ type: actionTypes.SET_MAP_DATA, payload: data.geoJson })
     })
   }
   useEffect(() => {

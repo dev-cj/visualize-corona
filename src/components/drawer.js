@@ -48,7 +48,7 @@ const DrawerOption = () => {
       <Button
         ref={btnRef}
         pos='absolute'
-        bottom='10%'
+        bottom='4%'
         left='1%'
         variantColor='teal'
         onClick={onOpen}
