@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react'
-
 import { Map, Marker, Popup, TileLayer } from 'react-leaflet'
 import L from 'leaflet'
 import moment from 'moment'
 import { geoData } from './helper'
+import { Box, Image, Text, Badge } from '@chakra-ui/core'
+import { useDispatch, useSelector } from 'react-redux'
+import * as actionTypes from '../redux/actions/actionTypes'
+
 // import { useToast, Box, Button } from '@chakra-ui/core'
 const icon = (url) =>
   new L.icon({
@@ -11,7 +14,8 @@ const icon = (url) =>
     iconSize: [25, 25],
   })
 const Maps = () => {
-  const [data, updateData] = useState(null)
+  const dispatch = useDispatch()
+  const [data, updateData] = useState(useSelector((state) => state.mapData))
 
   // const [pop, activePop] = useState(null);
   const asyncfun = async () => {
@@ -20,16 +24,24 @@ const Maps = () => {
   const position = [51.505, -0.09]
   const dataMap = () => {
     asyncfun().then((data) => {
-      console.log(data)
-      updateData(data)
+      updateData(data.geoJson)
+      dispatch({ type: actionTypes.SET_MAP_DATA, payload: data.geoJson })
+      dispatch({
+        type: actionTypes.SET_STATS_COUNTRIES,
+        payload: data.countriesObj,
+      })
     })
   }
   useEffect(() => {
-    dataMap()
+    if (!Object.keys(data).length) dataMap()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const marker = (prop) => {
+    // deathsPerOneMillion: 0
+    // tests: 6395
+    // testsPerOneMillion: 430
+    // todayDeaths: 0
     const properties = prop.properties
     const date = new Date(properties.updated)
     let lastUpdated = moment(date).fromNow()
@@ -40,21 +52,46 @@ const Maps = () => {
         position={[...prop.geometry.coordinates].reverse()}
       >
         <Popup>
-          <div className='markerCustom'>
-            <img
+          <Box
+            d='flex'
+            flexDir='column'
+            justifyContent='space-evenly'
+            height='auto'
+            width={200}
+          >
+            <Image
+              mt='0'
+              alignSelf='center'
               src={properties.countryInfo.flag}
               alt='country flag'
-              style={{ height: 'auto', width: '50%' }}
+              height='auto'
+              width='50%'
+              // style={{ height: 'auto', width: '50%' }}
             />
-          </div>
-          <br />
-          <div className='countryPopUp'>
-            <li> Total Cases : {properties.cases} </li>
-            <div className='todayAdded'> +{properties.todayCases} </div>
-            <li> Active : {properties.active} </li>
-            <li> Recovered : {properties.recovered} </li>
-            <li> Updated {lastUpdated} </li>
-          </div>
+            <Text mt='4%' fontSize='lg'>
+              {properties.country}
+            </Text>
+            <Box d='flex' alignItems='center' flexDir='column'>
+              <Text fontSize='md' marginY='0'>
+                Total Cases : {properties.cases}
+              </Text>
+              <Badge
+                variantColor='purple'
+                variant='solid'
+                fontSize='md'
+                marginY='3'
+              >
+                +{properties.todayCases}
+              </Badge>
+              <Text fontSize='sm'> Active : {properties.active} </Text>
+              <Text fontSize='sm'> Recovered : {properties.recovered} </Text>
+              <Text fontSize='sm'> Deaths : {properties.deaths} </Text>
+              <Text fontSize='sm'>
+                Cases Per Million : {properties.casesPerOneMillion}
+              </Text>
+              <Text fontSize='sm'> Updated {lastUpdated} </Text>
+            </Box>
+          </Box>
         </Popup>
       </Marker>
     )
@@ -63,12 +100,14 @@ const Maps = () => {
   const map = (
     <>
       <div className='map'>
-        <Map center={position} zoom={5}>
+        <Map center={position} zoom={4} maxZoom={15} minZoom={3}>
           <TileLayer
+            // url='https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}{r}.png'
+            // attribution='&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
             url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           />
-          {data
+          {Object.keys(data).length
             ? data.features.map((el) => marker(el))
             : console.log('data not fetched or markers not working')}
         </Map>

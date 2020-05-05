@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import { Heading, Text, Link, Icon, Box, Spinner } from '@chakra-ui/core'
+import { Spinner, Box } from '@chakra-ui/core'
 import DrawerOption from './drawer'
-import DesktopVisualizerLeft from './desktopVisualizerLeft'
 import Plot from 'react-plotly.js'
 import { useDispatch, useSelector } from 'react-redux'
 import * as actionTypes from '../redux/actions/actionTypes'
@@ -24,26 +23,27 @@ async function fetchData(url) {
 export default function Graph() {
   const dispatch = useDispatch()
   const plotData = useSelector((state) => state.plotReducer.plotData)
-  const [countryData, addData] = useState(null)
-
+  const [countryData, addData] = useState(
+    useSelector((state) => state.visualizeData)
+  )
   const getData = async () => {
     const data = await fetchData('new').then((data) => data)
-    await console.log(data)
+    // await console.log(data)
     let obj = {}
-    const old_api_func = () => {
-      data.forEach((el) => {
-        let country = el.country
-        let province = el.province
-        let timeline = el.timeline
-        if (province) {
-          // console.log('province :', country, province, obj)
-          obj[country] = { ...obj[country] }
-          obj[country]['province'] = { ...obj[country]['province'] }
+    // const old_api_func = () => {
+    //   data.forEach((el) => {
+    //     let country = el.country
+    //     let province = el.province
+    //     let timeline = el.timeline
+    //     if (province) {
+    //       // console.log('province :', country, province, obj)
+    //       obj[country] = { ...obj[country] }
+    //       obj[country]['province'] = { ...obj[country]['province'] }
 
-          obj[country]['province'][province] = { province, timeline }
-        } else obj[country] = timeline
-      })
-    }
+    //       obj[country]['province'][province] = { province, timeline }
+    //     } else obj[country] = timeline
+    //   })
+    // }
     const new_api_func = () => {
       data.data.forEach((el) => {
         let country = el.name
@@ -79,80 +79,66 @@ export default function Graph() {
   }
 
   useEffect(() => {
-    console.log('calling get data useffect')
-    getData()
+    if (!Object.keys(countryData).length) getData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
-    <div className='visualize-comp'>
-      <>
-        <div className='visualise-div'>
-          <div className='left-option-div'>
-            {countryData ? (
-              <DrawerOption key='drawer-option' />
-            ) : (
-              <>
-                'Fetching Data'
-                <Spinner
-                  thickness='4px'
-                  speed='0.65s'
-                  emptyColor='gray.200'
-                  color='blue.500'
-                  size='xl'
-                />
-              </>
-            )}
-          </div>
-          <Box d='flex' width='full' height='96%' flexDirection='row' bg='#485'>
-            <Box width='20%'>
-              <DesktopVisualizerLeft />
-            </Box>
-            <Box
-              d='flex'
-              flexDirection='column'
-              width='80%'
-              height='100%'
-              bg='#999'
-              pr={0}
-            >
-              <Plot
-                data={plotData.data}
-                layout={{
-                  ...plotData.layout,
-                  type: 'date',
-                  barmode: 'group',
-                  autosize: true,
-                  // width: window.innerWidth * 0.8,
-                  height: window.innerHeight * 0.96,
-                  // margin: {
-                  //   l: 50,
-                  //   r: 50,
-                  //   b: 100,
-                  //   t: 100,
-                  //   pad: 4,
-                  // },
-                }}
-                // frames={this.state.frames}
-                config={{
-                  ...plotData.config,
-                  displayModeBar: true,
-                  displaylogo: false,
-                  scrollZoom: true,
-                  responsive: true,
-                  useResizeHandler: true,
-                  style: { width: '100%', height: '100%' },
-                  toImageButtonOptions: {
-                    format: 'jpeg',
-                    scale: 3,
-                  },
-                }}
-                // onInitialized={figure => this.setState(figure)}
-                // onUpdate={figure => this.setState(figure)}
-              />
-            </Box>
-          </Box>
-        </div>
-      </>
-    </div>
+    <>
+      {Object.keys(countryData).length ? (
+        <DrawerOption key='drawer-option' />
+      ) : (
+        <Box
+          d='flex'
+          alignItems='center'
+          justifyContent='center'
+          width='100%'
+          bg='#9AE6B4'
+        >
+          'Fetching Data'
+          <Spinner
+            thickness='4px'
+            speed='0.65s'
+            emptyColor='gray.200'
+            color='blue.500'
+            size='xl'
+          />
+        </Box>
+      )}
+      <Plot
+        data={plotData.data}
+        layout={{
+          ...plotData.layout,
+          type: 'date',
+          barmode: 'group',
+          autosize: true,
+          width: window.innerWidth * 0.75,
+          height: window.innerHeight * 0.96,
+          // margin: {
+          //   l: 50,
+          //   r: 50,
+          //   b: 100,
+          //   t: 100,
+          //   pad: 4,
+          // },
+        }}
+        // frames={this.state.frames}
+        config={{
+          ...plotData.config,
+          displayModeBar: true,
+          displaylogo: false,
+          scrollZoom: true,
+          responsive: true,
+          useResizeHandler: true,
+          style: { width: '100%', height: '100%' },
+          toImageButtonOptions: {
+            format: 'jpeg',
+            scale: 3,
+          },
+        }}
+        // onInitialized={figure => this.setState(figure)}
+        // onUpdate={figure => this.setState(figure)}
+      />
+    </>
   )
 }

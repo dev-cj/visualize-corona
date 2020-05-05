@@ -16,9 +16,12 @@ export const geoData = async () => {
   const data = await mapEffect().then((data) => {
     return data
   })
+
   const hasData = Array.isArray(data) && data.length > 0
 
   if (!hasData) return
+  const countriesObj = {}
+  data.map((el) => (countriesObj[el['country']] = el))
 
   const geoJson = {
     type: 'FeatureCollection',
@@ -38,5 +41,5 @@ export const geoData = async () => {
     }),
   }
 
-  return geoJson
+  return { geoJson, countriesObj }
 }

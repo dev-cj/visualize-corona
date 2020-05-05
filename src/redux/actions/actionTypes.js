@@ -18,3 +18,9 @@ export const SET_singleCountry_dateRange = 'SET_SINGLE_COUNTRY_dateRange'
 
 export const SET_singleCountry_xaxisDateDiff =
   'SET_SINGLE_COUNTRY_xaxisDateDiff'
+
+export const SET_MAP_DATA = 'SET_MAP_DATA'
+
+export const SET_STATS_TIMELINE = 'SET_STATS_TIMELINE'
+
+export const SET_STATS_COUNTRIES = 'SET_STATS_COUNTRIES'

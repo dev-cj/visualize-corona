@@ -3,12 +3,20 @@ import * as actionTypes from '../actions/actionTypes'
 export const initialState = {
   plotData: {
     data: [
-      { type: 'bar', x: ['a', 'b', 'c'], y: [2, 5, 6] },
-      { type: 'bar', x: ['a', 'b', 'c'], y: [2, 5, 3] },
+      {
+        type: 'bar',
+        x: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June'],
+        y: [2, 5, 6, 15, 4, 2],
+      },
+      {
+        type: 'bar',
+        x: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June'],
+        y: [2, 5, 3, 2, 20, 7],
+      },
     ],
     layout: {
       autosize: true,
-      title: 'A sample plot',
+      title: '<b style="font-size:1.2em;">A Sample Plot</b>',
       barmode: 'group',
       xaxis: {},
     },

@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertIcon,
   Button,
   Menu,
   MenuButton,
@@ -349,37 +351,46 @@ const CountryChart = () => {
               {currentType === 'pie' && CRD.length ? (
                 <>
                   <Box mt={2}>
-                    <DatePicker
-                      {...(singleCountryData.pieDateSingle
-                        ? {
-                            selected: moment(
-                              singleCountryData.pieDateSingle,
-                              moment.defaultFormat
-                            ).toDate(),
-                          }
-                        : undefined)}
-                      dateFormat='dd/MM/yyyy'
-                      onChange={(date) =>
-                        dispatch({
-                          type: actionTypes.SET_singleCountry_pieDateSingle,
-                          payload: moment(date).format('YYYY-MM-DD'),
-                        })
-                      }
-                      minDate={moment(
-                        singleCountryData.dateRange[0],
-                        moment.defaultFormat
-                      ).toDate()}
-                      maxDate={moment(
-                        singleCountryData.dateRange[
-                          singleCountryData.dateRange.length - 1
-                        ],
-                        moment.defaultFormat
-                      ).toDate()}
-                      includeDates={singleCountryData.dateRange.map((el) =>
-                        moment(el, moment.defaultFormat).toDate()
-                      )}
-                      placeholderText='Select a date'
-                    />
+                    {!singleCountryData.pieDateSingle ? (
+                      <Alert status='info'>
+                        <AlertIcon />
+                        Select a date below
+                      </Alert>
+                    ) : null}
+
+                    <Box border='2px'>
+                      <DatePicker
+                        {...(singleCountryData.pieDateSingle
+                          ? {
+                              selected: moment(
+                                singleCountryData.pieDateSingle,
+                                moment.defaultFormat
+                              ).toDate(),
+                            }
+                          : undefined)}
+                        dateFormat='dd/MM/yyyy'
+                        onChange={(date) =>
+                          dispatch({
+                            type: actionTypes.SET_singleCountry_pieDateSingle,
+                            payload: moment(date).format('YYYY-MM-DD'),
+                          })
+                        }
+                        minDate={moment(
+                          singleCountryData.dateRange[0],
+                          moment.defaultFormat
+                        ).toDate()}
+                        maxDate={moment(
+                          singleCountryData.dateRange[
+                            singleCountryData.dateRange.length - 1
+                          ],
+                          moment.defaultFormat
+                        ).toDate()}
+                        includeDates={singleCountryData.dateRange.map((el) =>
+                          moment(el, moment.defaultFormat).toDate()
+                        )}
+                        placeholderText='Select a date'
+                      />
+                    </Box>
                   </Box>
                 </>
               ) : null}
