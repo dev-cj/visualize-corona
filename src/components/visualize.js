@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import { Spinner, Box } from '@chakra-ui/core'
-import DrawerOption from './drawer'
+import { Spinner, Box, Text, Image } from '@chakra-ui/core'
+// import DrawerOption from './drawer'
 import Plot from 'react-plotly.js'
 import { useDispatch, useSelector } from 'react-redux'
 import * as actionTypes from '../redux/actions/actionTypes'
@@ -86,7 +86,7 @@ export default function Graph() {
   return (
     <>
       {Object.keys(countryData).length ? (
-        <DrawerOption key='drawer-option' />
+        <Box d={['None', 'initial']}></Box>
       ) : (
         <Box
           d='flex'
@@ -105,40 +105,59 @@ export default function Graph() {
           />
         </Box>
       )}
-      <Plot
-        data={plotData.data}
-        layout={{
-          ...plotData.layout,
-          type: 'date',
-          barmode: 'group',
-          autosize: true,
-          width: window.innerWidth * 0.75,
-          height: window.innerHeight * 0.96,
-          // margin: {
-          //   l: 50,
-          //   r: 50,
-          //   b: 100,
-          //   t: 100,
-          //   pad: 4,
-          // },
-        }}
-        // frames={this.state.frames}
-        config={{
-          ...plotData.config,
-          displayModeBar: true,
-          displaylogo: false,
-          scrollZoom: true,
-          responsive: true,
-          useResizeHandler: true,
-          style: { width: '100%', height: '100%' },
-          toImageButtonOptions: {
-            format: 'jpeg',
-            scale: 3,
-          },
-        }}
-        // onInitialized={figure => this.setState(figure)}
-        // onUpdate={figure => this.setState(figure)}
-      />
+      <Box d={['None', 'initial']}>
+        <Plot
+          data={plotData.data}
+          layout={{
+            ...plotData.layout,
+            type: 'date',
+            barmode: 'group',
+            autosize: true,
+            width: window.innerWidth * 0.75,
+            height: window.innerHeight * 0.96,
+            // margin: {
+            //   l: 50,
+            //   r: 50,
+            //   b: 100,
+            //   t: 100,
+            //   pad: 4,
+            // },
+          }}
+          // frames={this.state.frames}
+          config={{
+            ...plotData.config,
+            displayModeBar: true,
+            displaylogo: false,
+            scrollZoom: true,
+            responsive: true,
+            useResizeHandler: true,
+            style: { width: '100%', height: '100%' },
+            toImageButtonOptions: {
+              format: 'jpeg',
+              scale: 3,
+            },
+          }}
+          // onInitialized={figure => this.setState(figure)}
+          // onUpdate={figure => this.setState(figure)}
+        />
+      </Box>
+      <Box d={['initial', 'None']}>
+        <Box
+          d='flex'
+          flexDir='column'
+          alignItems='center'
+          justifyContent='center'
+        >
+          <Image
+            rounded='md'
+            src='https://github.com/dev-cj/visualize-corona/tree/master/src/chartsExample.png'
+          />
+          <Text as='sup'>(Image of desktop view)</Text>
+          <Text mt={2} fontSize='xl' fontWeight='semibold' lineHeight='short'>
+            To visualize and download charts use this website on a Desktop
+          </Text>
+        </Box>
+      </Box>
     </>
   )
 }

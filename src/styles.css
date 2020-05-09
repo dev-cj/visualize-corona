@@ -11,7 +11,12 @@
   font-family: 'Raleway', sans-serif;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-around;
+}
+@media screen and (min-width: 30em) {
+  .info-box {
+    justify-content: space-between;
+  }
 }
 .footnote {
   color: #fff;

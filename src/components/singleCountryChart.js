@@ -190,7 +190,12 @@ const CountryChart = () => {
         <MenuButton mt={2} as={Button} variantColor='blue' size='md'>
           Select country
         </MenuButton>
-        <MenuList minWidth='240px' maxHeight='70vh' overflowY='scroll'>
+        <MenuList
+          minWidth='240px'
+          maxHeight='70vh'
+          overflowY='scroll'
+          zIndex={2}
+        >
           <MenuOptionGroup
             title='Country'
             type='radio'

@@ -5,7 +5,6 @@ import {
   DrawerHeader,
   DrawerOverlay,
   DrawerContent,
-  // DrawerCloseButton,
   Button,
   Select,
   useDisclosure,
@@ -47,12 +46,12 @@ const DrawerOption = () => {
     <>
       <Button
         ref={btnRef}
-        pos='absolute'
-        bottom='4%'
-        left='1%'
+        // pos='absolute'
+        // bottom='4%'
+        // left='1%'
         variantColor='teal'
         onClick={onOpen}
-        zIndex={100}
+        // zIndex={100}
         key='menu-button'
         leftIcon='edit'
       >

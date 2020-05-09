@@ -168,37 +168,35 @@ const DesktopVisualizerLeft = (prop) => {
     )
   }
   const CountryWise = () => {
-    const countryList = (
-      <Menu closeOnSelect={true}>
-        <Box d='flex' alignItems='center' justifyContent='center'>
-          <MenuButton
-            mt={1}
-            mb={1}
-            as={Button}
-            variantColor='blue'
-            size='md'
-            maxW='70%'
-          >
-            {currentCountry ? currentCountry : 'Select country'}
+    const CountryList = () => (
+      <Box d='flex' flexDir='column' w='100%'>
+        <Menu closeOnSelect={true}>
+          <MenuButton mt={1} mb={1} as={Button} variantColor='blue' size='md'>
+            {currentCountry || 'Select country'}
           </MenuButton>
-        </Box>
-        <MenuList minWidth='240px' maxHeight='50vh' overflowY='scroll'>
-          <MenuOptionGroup
-            title='Country'
-            type='radio'
-            onChange={(value) => setCurrentCountry(value)}
-            defaultValue={currentCountry}
+          <MenuList
+            minWidth='240px'
+            maxHeight='50vh'
+            overflowY='scroll'
+            placement='top'
           >
-            {Object.keys(countryData).map((el) => {
-              return (
-                <MenuItemOption key={el} value={el}>
-                  {el}
-                </MenuItemOption>
-              )
-            })}
-          </MenuOptionGroup>
-        </MenuList>
-      </Menu>
+            <MenuOptionGroup
+              title='Country'
+              type='radio'
+              onChange={(value) => setCurrentCountry(value)}
+              defaultValue={currentCountry}
+            >
+              {Object.keys(countryData).map((el) => {
+                return (
+                  <MenuItemOption key={el} value={el}>
+                    {el}
+                  </MenuItemOption>
+                )
+              })}
+            </MenuOptionGroup>
+          </MenuList>
+        </Menu>
+      </Box>
     )
     const SingleCountry = (prop) => {
       if (!currentCountry) return ''
@@ -307,14 +305,18 @@ const DesktopVisualizerLeft = (prop) => {
           </Box>
           <Box d='flex' flexDir='column' fontSize='sm' mt='2px'>
             <Box d='flex'>
-              Tests: &nbsp;
-              <Text color='blue.500'>{commaSepNo(tests)}&nbsp;</Text>
+              <Box d='flex'>
+                Tests: &nbsp;
+                <Text color='blue.500'>{commaSepNo(tests)}&nbsp;</Text>
+              </Box>
+              <Box d='flex'>
+                Tests per Million: &nbsp;
+                <Text color='blue.500'>
+                  {commaSepNo(testsPerOneMillion)}&nbsp;
+                </Text>
+              </Box>
             </Box>
             <Box d='flex'>
-              Tests per Million: &nbsp;
-              <Text color='blue.500'>
-                {commaSepNo(testsPerOneMillion)}&nbsp;
-              </Text>
               Cases per Million: &nbsp;
               <Text color='blue.500'>
                 {commaSepNo(casesPerOneMillion)}&nbsp;
@@ -325,9 +327,11 @@ const DesktopVisualizerLeft = (prop) => {
       )
     }
     return (
-      <Box>
-        {countryList}
-        {SingleCountry(currentCountry)}
+      <Box d='flex' flexDir='column' w='100%'>
+        <Box d='flex' alignItems='center' justifyContent='center'>
+          <CountryList />
+        </Box>
+        <SingleCountry currentCountry={currentCountry} />
       </Box>
     )
   }
@@ -335,8 +339,10 @@ const DesktopVisualizerLeft = (prop) => {
     <Box d='flex' flexDir='column' h='100%'>
       {dataStateGlobal ? (
         <Box width='100%' bg='#fff' paddingX='3%' pt='3%'>
-          {Global()}
-          {CountryWise()}
+          <Global />
+          <Box d={['None', 'flex']}>
+            <CountryWise />
+          </Box>
         </Box>
       ) : (
         FetchingData()
