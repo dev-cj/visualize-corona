@@ -38,10 +38,6 @@ const Maps = () => {
   }, [])
 
   const marker = (prop) => {
-    // deathsPerOneMillion: 0
-    // tests: 6395
-    // testsPerOneMillion: 430
-    // todayDeaths: 0
     const properties = prop.properties
     const date = new Date(properties.updated)
     let lastUpdated = moment(date).fromNow()
@@ -66,7 +62,6 @@ const Maps = () => {
               alt='country flag'
               height='auto'
               width='50%'
-              // style={{ height: 'auto', width: '50%' }}
             />
             <Text mt='4%' fontSize='lg'>
               {properties.country}

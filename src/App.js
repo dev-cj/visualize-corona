@@ -23,8 +23,14 @@ const App = () => {
               bg='#fff'
             >
               <Box d='flex' flexDir='column' h={['50%', '50%', '50%', '100%']}>
-                <Box textAlign='center' fontSize='2em' bg='#ff4' height='auto'>
-                  Corona Visualizer
+                <Box
+                  textAlign='center'
+                  fontSize='2em'
+                  bg='blue.500'
+                  height='auto'
+                  color='white'
+                >
+                  Covid-19 Visualizer
                 </Box>
                 <Box>
                   <DesktopVisualizerLeft active={activeComp} />
