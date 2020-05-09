@@ -150,9 +150,9 @@ export default function Graph() {
         >
           <Image
             rounded='md'
-            src='https://github.com/dev-cj/visualize-corona/tree/master/src/chartsExample.png'
+            src='https://raw.githubusercontent.com/dev-cj/visualize-corona/master/src/chartsExample.png'
           />
-          <Text as='sup'>(Image of desktop view)</Text>
+          <Text as='sub'>(Image of desktop view)</Text>
           <Text mt={2} fontSize='xl' fontWeight='semibold' lineHeight='short'>
             To visualize and download charts use this website on a Desktop
           </Text>
