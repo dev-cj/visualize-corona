@@ -188,7 +188,7 @@ const CountryChart = () => {
     <>
       <Menu closeOnSelect={true}>
         <MenuButton mt={2} as={Button} variantColor='blue' size='md'>
-          Select country
+          {currentCountry || ' Select country'}
         </MenuButton>
         <MenuList
           minWidth='240px'
@@ -224,7 +224,7 @@ const CountryChart = () => {
         <>
           <Menu closeOnSelect={true}>
             <MenuButton mt={2} as={Button} variantColor='blue' size='md'>
-              Select type
+              {currentType || 'Select type'}
             </MenuButton>
             <MenuList minWidth='240px'>
               <MenuOptionGroup
