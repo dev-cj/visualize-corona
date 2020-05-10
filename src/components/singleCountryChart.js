@@ -86,9 +86,18 @@ const CountryChart = () => {
             if (currentType === 'scatter') {
               data['mode'] = scatterType[el] ? scatterType[el] : 'lines'
             }
+            plot.layout.images = [
+              {
+                x: 0,
+                y: 0.9,
+              },
+            ]
             plot.data.push(data)
             update = true
           })
+          plot.layout.title =
+            plot.layout.title + ' as on ' + moment().format('MMM Do YYYY')
+
           plot.layout.xaxis = {
             dtick: singleCountryData.xaxisDateDiff * 86400000,
             automargin: true,
@@ -156,6 +165,12 @@ const CountryChart = () => {
               plot.layout.title +
               ' as on ' +
               (pieDateSingle ? pieDateSingle : dateArr.pop())
+            plot.layout.images = [
+              {
+                x: 0,
+                y: 0.2,
+              },
+            ]
             update = true
           }
         }
