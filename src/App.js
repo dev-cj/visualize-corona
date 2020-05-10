@@ -45,6 +45,7 @@ const App = () => {
                   {activeComp === 'map' ? (
                     <Box alignSelf='flex-end'>
                       <Button
+                        data-tname='VisualizeButton'
                         variantColor='pink'
                         variant='solid'
                         onClick={() => setActiveComp('graph')}
@@ -62,14 +63,28 @@ const App = () => {
                       <Box d={['None', 'initial']}>
                         <DrawerOption key='drawer-option' />
                       </Box>
-
                       <Button
+                        data-tname='MapButton'
                         variantColor='teal'
                         variant='solid'
                         onClick={() => setActiveComp('map')}
                       >
                         Map
                       </Button>
+                      <Box d={['None', 'initial']}>
+                        <Button
+                          data-tname='DownloadButton'
+                          variantColor='teal'
+                          variant='solid'
+                          onClick={() =>
+                            document
+                              .querySelector('a[data-title="Download plot"]')
+                              .click()
+                          }
+                        >
+                          Download
+                        </Button>
+                      </Box>
                     </Box>
                   )}
                 </Box>
@@ -80,26 +95,40 @@ const App = () => {
             </Box>
           </Box>
         </Box>
-        <div className='info-box'>
-          <div></div>
-          <div className='footnote'>
+        <Box className='info-box'>
+          <Box width={{ md: 100 / 3 + '%' }}></Box>
+          <Box
+            width={{ md: 100 / 3 + '%' }}
+            display={{ md: 'flex' }}
+            justifyContent={{ md: 'center' }}
+          >
             <a
+              data-tname='BuiltByCJ'
+              className='footnote'
               href='https://devcj.in'
               target='_blank'
               rel='noopener noreferrer'
             >
               Built By <span className='highlight'>CJ</span>
             </a>
-          </div>
-          <a
-            href='https://github.com/dev-cj/visualize-corona'
-            target='_blank'
-            rel='noopener noreferrer'
+          </Box>
+          <Box
+            width={{ md: 100 / 3 + '%' }}
+            display={{ md: 'flex' }}
+            justifyContent={{ md: 'flex-end' }}
             style={{ color: '#fff' }}
           >
-            Fork this repo <span className='highlight'>here &nbsp;</span>
-          </a>
-        </div>
+            <a
+              data-tname='ForkThisRepo'
+              href='https://github.com/dev-cj/visualize-corona'
+              target='_blank'
+              rel='noopener noreferrer'
+            >
+              Fork this repo &nbsp;
+              <span className='highlight'>here &nbsp;</span>
+            </a>
+          </Box>
+        </Box>
       </Box>
     </ThemeProvider>
   )

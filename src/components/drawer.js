@@ -52,6 +52,7 @@ const DrawerOption = () => {
         variantColor='teal'
         onClick={onOpen}
         // zIndex={100}
+        data-tname='CreateChart'
         key='menu-button'
         leftIcon='edit'
       >

@@ -171,7 +171,14 @@ const DesktopVisualizerLeft = (prop) => {
     const CountryList = () => (
       <Box d='flex' flexDir='column' w='100%'>
         <Menu closeOnSelect={true}>
-          <MenuButton mt={1} mb={1} as={Button} variantColor='blue' size='md'>
+          <MenuButton
+            mt={1}
+            mb={1}
+            as={Button}
+            variantColor='blue'
+            size='md'
+            data-tname='SelectCountrySingle'
+          >
             {currentCountry || 'Select country'}
           </MenuButton>
           <MenuList
