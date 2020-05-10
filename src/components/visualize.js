@@ -150,7 +150,7 @@ export default function Graph() {
         >
           <Image
             rounded='md'
-            src='https://raw.githubusercontent.com/dev-cj/visualize-corona/master/src/chartsExample.png'
+            src='https://raw.githubusercontent.com/dev-cj/visualize-corona/master/src/chartsSample.png'
           />
           <Text as='sub'>(Image of desktop view)</Text>
           <Text mt={2} fontSize='xl' fontWeight='semibold' lineHeight='short'>
