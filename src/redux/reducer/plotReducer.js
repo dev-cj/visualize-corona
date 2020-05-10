@@ -36,7 +36,8 @@ const plotReducer = (state = initialState, action) => {
             images: [
               {
                 name: 'watermark_CJ',
-                source: 'https://devcj.in/images/logo.png',
+                source:
+                  'https://raw.githubusercontent.com/dev-cj/visualize-corona/master/src/watermark.png',
                 xref: 'paper',
                 yref: 'paper',
                 x: 0,
