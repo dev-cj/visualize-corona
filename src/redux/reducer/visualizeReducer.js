@@ -11,7 +11,12 @@ const visualizeReducer = (state = initialState, action) => {
         ...action.payload,
       }
     }
-
+    case actionTypes.SET_COUNTRY_DATA: {
+      return {
+        ...state,
+        ...action.payload,
+      }
+    }
     default:
       return state
   }

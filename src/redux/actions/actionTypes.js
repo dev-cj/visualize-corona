@@ -1,5 +1,7 @@
 export const SET_DATA = 'SET_API_DATA'
 
+export const SET_COUNTRY_DATA = 'SET_COUNTRY_DATA'
+
 export const SET_PLOT = 'SET_PLOT'
 
 export const SET_SingleCountryData = 'SET_SingleCountryData'

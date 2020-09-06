@@ -7,10 +7,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import * as actionTypes from '../redux/actions/actionTypes'
 
 async function fetchData(url) {
-  const historical = 'https://corona.lmao.ninja/v2/historical?lastdays=all'
-  const corona_api = 'https://corona-api.com/countries?include=timeline'
+  // const historical =
+  //   'https://corona.lmao.ninja/v3/covid-19/historical?lastdays=all'
+  // const corona_api = 'https://corona-api.com/countries?include=timeline'
+  const countries = ' https://corona-api.com/countries'
   try {
-    const api = url === 'old' ? historical : corona_api
+    const api = countries
     let response = await axios.get(api)
     // console.log(response.data);
     return response.data
@@ -27,8 +29,7 @@ export default function Graph() {
     useSelector((state) => state.visualizeData)
   )
   const getData = async () => {
-    const data = await fetchData('new').then((data) => data)
-    // await console.log(data)
+    const data = await fetchData().then((data) => data)
     let obj = {}
     // const old_api_func = () => {
     //   data.forEach((el) => {
@@ -44,36 +45,41 @@ export default function Graph() {
     //     } else obj[country] = timeline
     //   })
     // }
-    const new_api_func = () => {
-      data.data.forEach((el) => {
-        let country = el.name
-        let keys_arr = Object.keys(el)
-        let countryObj = {}
-        keys_arr.forEach((key) => {
-          if (key === 'timeline') {
-            let timelineArr = el[key]
-            let timelineObj = {}
-            const dataByDate = {}
-            let keys = timelineArr[1] ? Object.keys(timelineArr[1]) : null
-            if (keys)
-              keys.forEach((key) => {
-                timelineObj[key] = timelineArr
-                  .map((obj) => {
-                    if (key === 'date') {
-                      dataByDate[obj.date] = obj
-                    }
-                    return obj[key]
-                  })
-                  .reverse()
-              })
-            timelineObj['dataByDate'] = dataByDate
-            countryObj[key] = timelineObj
-          } else countryObj[key] = el[key]
+    // const new_api_func = () => {
+    //   data.data.forEach((el) => {
+    //     let country = el.name
+    //     let keys_arr = Object.keys(el)
+    //     let countryObj = {}
+    //     keys_arr.forEach((key) => {
+    //       if (key === 'timeline') {
+    //         let timelineArr = el[key]
+    //         let timelineObj = {}
+    //         const dataByDate = {}
+    //         let keys = timelineArr[1] ? Object.keys(timelineArr[1]) : null
+    //         if (keys)
+    //           keys.forEach((key) => {
+    //             timelineObj[key] = timelineArr
+    //               .map((obj) => {
+    //                 if (key === 'date') {
+    //                   dataByDate[obj.date] = obj
+    //                 }
+    //                 return obj[key]
+    //               })
+    //               .reverse()
+    //           })
+    //         timelineObj['dataByDate'] = dataByDate
+    //         countryObj[key] = timelineObj
+    //       } else countryObj[key] = el[key]
+    //     })
+    //     obj[country] = { ...countryObj }
+    //   })
+    // }
+    await data.data.forEach(
+      (el) =>
+        (obj[el.name] = {
+          code: el.code,
         })
-        obj[country] = { ...countryObj }
-      })
-    }
-    await new_api_func()
+    )
     await addData(obj)
     dispatch({ type: actionTypes.SET_DATA, payload: obj })
   }

@@ -22,10 +22,14 @@ import * as actionTypes from '../redux/actions/actionTypes'
 import moment from 'moment'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
+import axios from 'axios'
 
 const CountryChart = () => {
   const dispatch = useDispatch()
-  const countries = useSelector((state) => state.visualizeData)
+  const visualizeData = useSelector((state) => {
+    return { ...state.visualizeData }
+  })
+  const countries = { ...visualizeData }
   const [countryArr] = useState(Object.keys(countries).sort())
   const singleCountryData = useSelector((state) => state.singleCountryData)
 
@@ -71,6 +75,7 @@ const CountryChart = () => {
 
         if (['scatter', 'bar'].includes(currentType)) {
           CRD.forEach((el) => {
+            console.log(countries[currentCountry], 'rooooooh')
             const xaxisDate = countries[currentCountry]['timeline']['date']
             const yAxisData = countries[currentCountry]['timeline'][getKey[el]]
             const data = {
@@ -186,6 +191,14 @@ const CountryChart = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [singleCountryPlot])
+
+  useEffect(() => {
+    if (currentCountry) {
+      selectCountry(currentCountry)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentCountry])
+
   useEffect(() => {
     modifySingleCountry('CRD')
     setApply(true)
@@ -197,6 +210,61 @@ const CountryChart = () => {
       type: actionTypes.SET_singleCountry_scatterType,
       payload: { ...scatterType, [arr[0]]: arr[1] },
     })
+  }
+  const selectCountry = async (value) => {
+    const code = countries[value]['code']
+    async function fetchData() {
+      // const historical =
+      //   'https://corona.lmao.ninja/v3/covid-19/historical?lastdays=all'
+      // const corona_api = 'https://corona-api.com/countries?include=timeline'
+      const countries = `https://corona-api.com/countries/${code}`
+      try {
+        const api = countries
+        let response = await axios.get(api)
+        // console.log(response.data);
+        return response.data.data
+      } catch (e) {
+        console.log(`Failed to fetch country data: ${e.message}`, e)
+        return
+      }
+    }
+    const country_response = await fetchData().then((data) => data)
+    const dataByDate = {}
+    const dataByKey = {
+      confirmed: [],
+      deaths: [],
+      recovered: [],
+      active: [],
+      new_confirmed: [],
+      new_deaths: [],
+      new_recovered: [],
+      date: [],
+    }
+    country_response.timeline.forEach((obj) => {
+      dataByDate[obj.date] = { ...obj }
+      Object.keys(dataByKey).forEach((key) => {
+        dataByKey[key].unshift(obj[key])
+      })
+    })
+    const COUNTRY_DATA = {
+      [country_response.name]: {
+        code: country_response.code,
+        timeline: {
+          dataByDate: dataByDate,
+          date: Object.keys(dataByDate).reverse(),
+          ...dataByKey,
+        },
+      },
+    }
+    await dispatch({
+      type: actionTypes.SET_COUNTRY_DATA,
+      payload: COUNTRY_DATA,
+    })
+    await dispatch({
+      type: actionTypes.SET_singleCountry_dateRange,
+      payload: Object.keys(dataByDate).reverse(),
+    })
+    await dispatch({ type: actionTypes.SET_singleCountry, payload: value })
   }
   const optionsArray = ['Cases', 'Deaths', 'Recovered', 'Active']
   return (
@@ -215,13 +283,7 @@ const CountryChart = () => {
             title='Country'
             type='radio'
             onChange={(value) => {
-              dispatch({ type: actionTypes.SET_singleCountry, payload: value })
-              dispatch({
-                type: actionTypes.SET_singleCountry_dateRange,
-                payload: Object.keys(
-                  countries[value]['timeline']['dataByDate']
-                ).reverse(),
-              })
+              selectCountry(value)
             }}
             defaultValue={currentCountry}
           >
