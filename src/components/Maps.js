@@ -7,7 +7,6 @@ import { Box, Image, Text, Badge } from '@chakra-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
 import * as actionTypes from '../redux/actions/actionTypes'
 
-// import { useToast, Box, Button } from '@chakra-ui/core'
 const icon = (url) =>
   new L.icon({
     iconUrl: 'https://img.icons8.com/color/96/000000/marker.png',
@@ -17,13 +16,13 @@ const Maps = () => {
   const dispatch = useDispatch()
   const [data, updateData] = useState(useSelector((state) => state.mapData))
 
-  // const [pop, activePop] = useState(null);
-  const asyncfun = async () => {
-    return await geoData().then((data) => data)
-  }
   const position = [51.505, -0.09]
-  const dataMap = () => {
-    asyncfun().then((data) => {
+  const dataMap = async () => {
+    await geoData().then((data) => {
+      if (!data) {
+        return
+      }
+
       updateData(data.geoJson)
       dispatch({
         type: actionTypes.SET_STATS_COUNTRIES,
@@ -39,8 +38,12 @@ const Maps = () => {
 
   const marker = (prop) => {
     const properties = prop.properties
+    if (prop.geometry.coordinates.some((e) => !!!e)) {
+      return null
+    }
     const date = new Date(properties.updated)
     let lastUpdated = moment(date).fromNow()
+
     return (
       <Marker
         icon={icon()}
@@ -55,16 +58,18 @@ const Maps = () => {
             height='auto'
             width={200}
           >
-            <Image
-              mt='0'
-              alignSelf='center'
-              src={properties.countryInfo.flag}
-              alt='country flag'
-              height='auto'
-              width='50%'
-            />
+            {properties.countryInfo && (
+              <Image
+                mt='0'
+                alignSelf='center'
+                src={properties.countryInfo.flag}
+                alt='country flag'
+                height='auto'
+                width='50%'
+              />
+            )}
             <Text mt='4%' fontSize='lg'>
-              {properties.country}
+              {properties.name}
             </Text>
             <Box d='flex' alignItems='center' flexDir='column'>
               <Text fontSize='md' marginY='0'>

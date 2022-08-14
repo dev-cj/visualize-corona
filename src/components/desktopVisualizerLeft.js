@@ -76,7 +76,7 @@ const DesktopVisualizerLeft = (prop) => {
       num.toLocaleString('en', {
         useGrouping: true,
       })
-    console.log(latestGlobalData, percentage)
+
     return (
       <Box borderWidth='1px' rounded='md' p='2%'>
         <Box d='flex' alignItems='flex-start' flexDir='column'>
@@ -312,23 +312,29 @@ const DesktopVisualizerLeft = (prop) => {
           </Box>
           <Box d='flex' flexDir='column' fontSize='sm' mt='2px'>
             <Box d='flex'>
+              {tests && (
+                <Box d='flex'>
+                  Tests: &nbsp;
+                  <Text color='blue.500'>{commaSepNo(tests)}&nbsp;</Text>
+                </Box>
+              )}
+              {testsPerOneMillion && (
+                <Box d='flex'>
+                  Tests per Million: &nbsp;
+                  <Text color='blue.500'>
+                    {commaSepNo(testsPerOneMillion)}&nbsp;
+                  </Text>
+                </Box>
+              )}
+            </Box>
+            {casesPerOneMillion && (
               <Box d='flex'>
-                Tests: &nbsp;
-                <Text color='blue.500'>{commaSepNo(tests)}&nbsp;</Text>
-              </Box>
-              <Box d='flex'>
-                Tests per Million: &nbsp;
+                Cases per Million: &nbsp;
                 <Text color='blue.500'>
-                  {commaSepNo(testsPerOneMillion)}&nbsp;
+                  {commaSepNo(casesPerOneMillion)}&nbsp;
                 </Text>
               </Box>
-            </Box>
-            <Box d='flex'>
-              Cases per Million: &nbsp;
-              <Text color='blue.500'>
-                {commaSepNo(casesPerOneMillion)}&nbsp;
-              </Text>
-            </Box>
+            )}
           </Box>
         </Box>
       )

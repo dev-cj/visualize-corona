@@ -31,49 +31,7 @@ export default function Graph() {
   const getData = async () => {
     const data = await fetchData().then((data) => data)
     let obj = {}
-    // const old_api_func = () => {
-    //   data.forEach((el) => {
-    //     let country = el.country
-    //     let province = el.province
-    //     let timeline = el.timeline
-    //     if (province) {
-    //       // console.log('province :', country, province, obj)
-    //       obj[country] = { ...obj[country] }
-    //       obj[country]['province'] = { ...obj[country]['province'] }
 
-    //       obj[country]['province'][province] = { province, timeline }
-    //     } else obj[country] = timeline
-    //   })
-    // }
-    // const new_api_func = () => {
-    //   data.data.forEach((el) => {
-    //     let country = el.name
-    //     let keys_arr = Object.keys(el)
-    //     let countryObj = {}
-    //     keys_arr.forEach((key) => {
-    //       if (key === 'timeline') {
-    //         let timelineArr = el[key]
-    //         let timelineObj = {}
-    //         const dataByDate = {}
-    //         let keys = timelineArr[1] ? Object.keys(timelineArr[1]) : null
-    //         if (keys)
-    //           keys.forEach((key) => {
-    //             timelineObj[key] = timelineArr
-    //               .map((obj) => {
-    //                 if (key === 'date') {
-    //                   dataByDate[obj.date] = obj
-    //                 }
-    //                 return obj[key]
-    //               })
-    //               .reverse()
-    //           })
-    //         timelineObj['dataByDate'] = dataByDate
-    //         countryObj[key] = timelineObj
-    //       } else countryObj[key] = el[key]
-    //     })
-    //     obj[country] = { ...countryObj }
-    //   })
-    // }
     await data.data.forEach(
       (el) =>
         (obj[el.name] = {
