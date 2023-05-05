@@ -54,7 +54,7 @@ const CountryChart = () => {
           config: {},
         }
         const getKey = {
-          cases: 'confirmed',
+          cases: 'cases',
           deaths: 'deaths',
           recovered: 'recovered',
           active: 'active',
@@ -75,7 +75,6 @@ const CountryChart = () => {
 
         if (['scatter', 'bar'].includes(currentType)) {
           CRD.forEach((el) => {
-            console.log(countries[currentCountry], 'rooooooh')
             const xaxisDate = countries[currentCountry]['timeline']['date']
             const yAxisData = countries[currentCountry]['timeline'][getKey[el]]
             const data = {
@@ -217,56 +216,53 @@ const CountryChart = () => {
       // const historical =
       //   'https://corona.lmao.ninja/v3/covid-19/historical?lastdays=all'
       // const corona_api = 'https://corona-api.com/countries?include=timeline'
-      const countries = `https://corona-api.com/countries/${code}`
+      const countries = `https://disease.sh/v3/covid-19/historical/${code}?lastdays=270`
       try {
         const api = countries
         let response = await axios.get(api)
-        // console.log(response.data);
-        return response.data.data
+
+        return response.data
       } catch (e) {
         console.log(`Failed to fetch country data: ${e.message}`, e)
         return
       }
     }
-    const country_response = await fetchData().then((data) => data)
+    const countryData = await fetchData().then((data) => data)
+    console.log(countryData)
+    if (!countryData) {
+      return
+    }
+    const availableDates = Object.keys(countryData.timeline.cases).map((d) =>
+      moment(d, 'MM/DD/YY').format('YYYY-MM-DD')
+    )
     const dataByDate = {}
     const dataByKey = {
-      confirmed: [],
-      deaths: [],
-      recovered: [],
-      active: [],
-      new_confirmed: [],
-      new_deaths: [],
-      new_recovered: [],
-      date: [],
+      cases: Object.values(countryData.timeline.cases),
+      deaths: Object.values(countryData.timeline.deaths),
+      recovered: Object.values(countryData.timeline.recovered),
     }
-    country_response.timeline.forEach((obj) => {
-      dataByDate[obj.date] = { ...obj }
-      Object.keys(dataByKey).forEach((key) => {
-        dataByKey[key].unshift(obj[key])
-      })
-    })
+
     const COUNTRY_DATA = {
-      [country_response.name]: {
-        code: country_response.code,
+      [countryData.country]: {
+        code: countryData.country,
         timeline: {
           dataByDate: dataByDate,
-          date: Object.keys(dataByDate).reverse(),
+          date: availableDates,
           ...dataByKey,
         },
       },
     }
-    await dispatch({
+    dispatch({
       type: actionTypes.SET_COUNTRY_DATA,
       payload: COUNTRY_DATA,
     })
-    await dispatch({
+    dispatch({
       type: actionTypes.SET_singleCountry_dateRange,
       payload: Object.keys(dataByDate).reverse(),
     })
-    await dispatch({ type: actionTypes.SET_singleCountry, payload: value })
+    dispatch({ type: actionTypes.SET_singleCountry, payload: value })
   }
-  const optionsArray = ['Cases', 'Deaths', 'Recovered', 'Active']
+  const optionsArray = ['Cases', 'Deaths', 'Recovered']
   return (
     <>
       <Menu closeOnSelect={true}>

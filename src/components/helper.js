@@ -4,7 +4,7 @@ async function mapEffect() {
   let response
 
   try {
-    response = await axios.get('https://corona-api.com/countries')
+    response = await axios.get('https://disease.sh/v3/covid-19/countries')
     return response.data
   } catch (e) {
     console.log(`Failed to fetch countries: ${e.message}`, e)
@@ -14,7 +14,7 @@ async function mapEffect() {
 
 export const geoData = async () => {
   const data = await mapEffect().then((data) => {
-    return data.data
+    return data ? data : null
   })
 
   const hasData = Array.isArray(data) && data.length > 0
@@ -23,46 +23,53 @@ export const geoData = async () => {
   const countriesObj = {}
 
   data.forEach((country) => {
-    const { latest_data = {}, today = {}, updated_at } = country
-    const { confirmed: todayConfirmed } = today
+    const {
+      updated,
+      cases,
+      todayCases,
+      deaths,
+      recovered,
+      critical,
+      casesPerOneMillion,
+    } = country
 
-    const { confirmed, critical, deaths, recovered, calculated } = latest_data
-    const { cases_per_million_population } = calculated
-    countriesObj[country.name] = {
+    countriesObj[country.country] = {
       ...country,
-      cases: confirmed || 0,
-      todayCases: todayConfirmed || 0,
+      cases: cases || 0,
+      todayCases: todayCases || 0,
       active: critical || 0,
       recovered: recovered || 0,
       deaths: deaths || 0,
-      casesPerOneMillion: cases_per_million_population || 0,
-      updated: updated_at,
+      casesPerOneMillion: casesPerOneMillion || 0,
+      updated: updated,
     }
   })
   const geoJson = {
     type: 'FeatureCollection',
     features: data.map((country) => {
       const {
-        coordinates = {},
-        latest_data = {},
-        today = {},
-        updated_at,
+        updated,
+        countryInfo,
+        cases,
+        todayCases,
+        deaths,
+        recovered,
+        critical,
+        casesPerOneMillion,
       } = country
-      const { confirmed: todayConfirmed } = today
-      const { latitude, longitude } = coordinates
-      const { confirmed, critical, deaths, recovered, calculated } = latest_data
-      const { cases_per_million_population } = calculated
+      const { lat: latitude, long: longitude } = countryInfo
+
       return {
         type: 'Feature',
         properties: {
           ...country,
-          cases: confirmed || 0,
-          todayCases: todayConfirmed || 0,
+          cases: cases || 0,
+          todayCases: todayCases || 0,
           active: critical || 0,
           recovered: recovered || 0,
           deaths: deaths || 0,
-          casesPerOneMillion: cases_per_million_population || 0,
-          updated: updated_at,
+          casesPerOneMillion: casesPerOneMillion || 0,
+          updated: updated,
         },
         geometry: {
           type: 'Point',

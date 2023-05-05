@@ -10,7 +10,7 @@ async function fetchData(url) {
   // const historical =
   //   'https://corona.lmao.ninja/v3/covid-19/historical?lastdays=all'
   // const corona_api = 'https://corona-api.com/countries?include=timeline'
-  const countries = ' https://corona-api.com/countries'
+  const countries = 'https://disease.sh/v3/covid-19/countries'
   try {
     const api = countries
     let response = await axios.get(api)
@@ -30,15 +30,18 @@ export default function Graph() {
   )
   const getData = async () => {
     const data = await fetchData().then((data) => data)
+    if (!data) {
+      return
+    }
     let obj = {}
 
-    await data.data.forEach(
+    await data.forEach(
       (el) =>
-        (obj[el.name] = {
-          code: el.code,
+        (obj[el.country] = {
+          code: el.country,
         })
     )
-    await addData(obj)
+    addData(obj)
     dispatch({ type: actionTypes.SET_DATA, payload: obj })
   }
 
@@ -59,7 +62,7 @@ export default function Graph() {
           width='100%'
           bg='#9AE6B4'
         >
-          'Fetching Data'
+          Fetching Data
           <Spinner
             thickness='4px'
             speed='0.65s'

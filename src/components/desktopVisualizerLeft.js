@@ -24,9 +24,9 @@ const DesktopVisualizerLeft = (prop) => {
   const dispatch = useDispatch()
   const [dataStateGlobal, setdataStateGlobal] = useState(false)
   const getData = async () => {
-    const api = 'https://corona-api.com/timeline'
+    const api = 'https://disease.sh/v3/covid-19/all'
     try {
-      let response = await axios.get(api).then((data) => data.data.data)
+      let response = await axios.get(api).then((data) => data.data)
       await dispatch({
         type: actionTypes.SET_STATS_TIMELINE,
         payload: response,
@@ -49,12 +49,13 @@ const DesktopVisualizerLeft = (prop) => {
       justifyContent='center'
       alignItems='center'
       backgroundColor='gray.500'
+      marginTop={'10px'}
     >
       Fetching Data
     </Box>
   )
   const Global = () => {
-    const latestGlobalData = timelineData[0]
+    const latestGlobalData = timelineData
     const boxARDStyle = {
       d: 'flex',
       flexDir: 'row',
@@ -62,10 +63,14 @@ const DesktopVisualizerLeft = (prop) => {
       mt: '1%',
       alignItems: 'center',
     }
-    const confirmed = latestGlobalData.confirmed
+    const confirmed = latestGlobalData.cases
     const active = latestGlobalData.active
     const recovered = latestGlobalData.recovered
     const deaths = latestGlobalData.deaths
+
+    const todayConfirmed = latestGlobalData.todayCases
+    const todayRecovered = latestGlobalData.todayRecovered
+    const todayDeaths = latestGlobalData.todayDeaths
 
     const percentage = {
       active: (active / confirmed) * 100,
@@ -120,7 +125,7 @@ const DesktopVisualizerLeft = (prop) => {
             <Box d='flex' alignItems='center'>
               <Icon name='triangle-up' color='blue.500' />
               <Text color='gray.500' fontSize='md'>
-                {commaSepNo(latestGlobalData.new_confirmed)}
+                {commaSepNo(todayConfirmed)}
               </Text>
             </Box>
             <Text color='black' fontSize='md'>
@@ -134,7 +139,7 @@ const DesktopVisualizerLeft = (prop) => {
             <Box d='flex' alignItems='center'>
               <Icon name='triangle-up' color='green.500' />
               <Text color='gray.500' fontSize='md'>
-                {commaSepNo(latestGlobalData.new_recovered)}
+                {commaSepNo(todayRecovered)}
               </Text>
             </Box>
             <Text color='black' fontSize='md'>
@@ -148,7 +153,7 @@ const DesktopVisualizerLeft = (prop) => {
             <Box d='flex' alignItems='center'>
               <Icon name='triangle-up' color='red.500' />
               <Text color='gray.500' fontSize='md'>
-                {commaSepNo(latestGlobalData.new_deaths)}
+                {commaSepNo(todayDeaths)}
               </Text>
             </Box>
             <Text color='black' fontSize='md'>

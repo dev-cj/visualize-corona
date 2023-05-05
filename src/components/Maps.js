@@ -107,9 +107,11 @@ const Maps = () => {
             url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           />
-          {Object.keys(data).length
-            ? data.features.map((el) => marker(el))
-            : console.log('data not fetched or markers not working')}
+          {Object.keys(data).length ? (
+            data.features.map((el) => marker(el))
+          ) : (
+            <div>Data unavailable</div>
+          )}
         </Map>
       </div>
     </>
